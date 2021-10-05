@@ -1,3 +1,4 @@
+name: Fast Forward merge PR
 on: 
   issue_comment:
     types: [created]
