@@ -36,13 +36,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GitHubClientWrapper = void 0;
+var exec_1 = require("@actions/exec");
 var github_1 = require("@actions/github");
 var GitHubClientWrapper = /** @class */ (function () {
-    function GitHubClientWrapper(context, githubToken) {
+    function GitHubClientWrapper(context, githubToken, useGitPush) {
         this.context = context;
         this.restClient = new github_1.GitHub(githubToken);
         this.owner = context.repo.owner;
         this.repo = context.repo.repo;
+        this.useGitPush = useGitPush;
     }
     ;
     GitHubClientWrapper.prototype.get_current_pull_request_number = function () {
@@ -78,16 +81,22 @@ var GitHubClientWrapper = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.get_pull_request(pr_number)];
                     case 1:
                         pullRequestData = _a.sent();
-                        return [4 /*yield*/, this.restClient.git.updateRef({
-                                owner: this.owner,
-                                repo: this.repo,
-                                ref: "heads/" + pullRequestData.base.ref,
-                                sha: pullRequestData.head.sha,
-                                force: false
-                            })];
+                        if (!this.useGitPush) return [3 /*break*/, 3];
+                        return [4 /*yield*/, exec_1.exec('git', ['push', 'origin', pullRequestData.head.sha + ":heads/" + pullRequestData.base.ref], {})];
                     case 2:
                         _a.sent();
-                        return [2 /*return*/];
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, this.restClient.git.updateRef({
+                            owner: this.owner,
+                            repo: this.repo,
+                            ref: "heads/" + pullRequestData.base.ref,
+                            sha: pullRequestData.head.sha,
+                            force: false
+                        })];
+                    case 4:
+                        _a.sent();
+                        _a.label = 5;
+                    case 5: return [2 /*return*/];
                 }
             });
         });

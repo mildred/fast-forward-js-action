@@ -24,7 +24,9 @@ async function run(): Promise<void>{
   const prod_branch = core.getInput('production_branch') || 'master';
   const stage_branch = core.getInput('staging_branch') || 'staging';
 
-  const client = new GitHubClientWrapper(github.context , github_token);
+  const use_git_push = core.getInput('use_git_push') == 'true';
+
+  const client = new GitHubClientWrapper(github.context, github_token, use_git_push);
   const fastForward = new FastForwardAction(client);
 
   const ff_status = await fastForward.async_merge_fast_forward(client,set_status);

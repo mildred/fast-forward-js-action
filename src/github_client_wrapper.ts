@@ -1,3 +1,4 @@
+import { exec } from '@actions/exec';
 import { GitHub } from '@actions/github';
 import { Context } from '@actions/github/lib/context';
 import { GitHubClient } from './github_client_interface';
@@ -8,11 +9,13 @@ export class GitHubClientWrapper implements GitHubClient{
   restClient: GitHub;
   owner: string;
   repo: string;
+  useGitPush: boolean;
 
-  constructor(public context: Context, githubToken: string){
+  constructor(public context: Context, githubToken: string, useGitPush: boolean){
     this.restClient = new GitHub(githubToken);
     this.owner = context.repo.owner;
     this.repo = context.repo.repo;
+    this.useGitPush = useGitPush;
   };
   
   get_current_pull_request_number(): number {
@@ -35,13 +38,17 @@ export class GitHubClientWrapper implements GitHubClient{
   async fast_forward_target_to_source_async(pr_number: number): Promise<void> {
     const pullRequestData =  await this.get_pull_request(pr_number);
     
-    await this.restClient.git.updateRef({
-      owner: this.owner,
-      repo: this.repo,
-      ref: `heads/${pullRequestData.base.ref}`,
-      sha: pullRequestData.head.sha,
-      force: false
-    });
+    if(this.useGitPush) {
+      await exec('git', ['push', 'origin', `${pullRequestData.head.sha}:heads/${pullRequestData.base.ref}`], {})
+    } else {
+      await this.restClient.git.updateRef({
+        owner: this.owner,
+        repo: this.repo,
+        ref: `heads/${pullRequestData.base.ref}`,
+        sha: pullRequestData.head.sha,
+        force: false
+      });
+    }
 
   };
 

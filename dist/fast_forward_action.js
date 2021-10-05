@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FastForwardAction = void 0;
 var FastForwardAction = /** @class */ (function () {
     function FastForwardAction(client) {
         this.client = client;

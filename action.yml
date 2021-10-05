@@ -17,6 +17,8 @@ inputs:
     description: 'Optional, production branch name. Default value is master.'
   staging_branch:
     description: 'Optional, staging or preproduction branch name. Default value is staging.'
+  use_git_push:
+    description: 'Optional, if true will use git instead of the API to push on target branch.'
 runs:
   using: 'node12'
   main: 'dist/index.js'
