@@ -11,6 +11,10 @@ jobs:
       # To use this repository's private action, you must check out the repository
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          token: ~
+          ssh-key: ${{ secrets.SSH_DEPLOY_KEY }}
+          persist-credentials: true
       # Basic use case example
       - name: Fast Forward PR
         id: ff-action
@@ -19,6 +23,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           success_message: 'Success! Fast forwarded ***target_base*** to ***source_head***! ```git checkout target_base && git merge source_head --ff-only``` '
           failure_message: 'Failed! Cannot do fast forward!'
+          use_git_push: true
       # Advanced use case example
       # - name: Fast Forward PR
       #   id: ff-action

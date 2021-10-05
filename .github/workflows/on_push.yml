@@ -1,0 +1,10 @@
+name: On push
+
+on: push
+jobs:
+  on_push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo Push Success
+
